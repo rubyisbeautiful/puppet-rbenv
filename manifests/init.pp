@@ -33,7 +33,7 @@
 # === Requires
 #
 # This module requires the following modules:
-#   'puppetlabs/git' >= 0.0.3
+#   'puppetlabs/vcsrepo' >= 1.1.0
 #   'puppetlabs/stdlib' >= 4.1.0
 #
 # === Examples
@@ -64,12 +64,20 @@ class rbenv (
 ) inherits rbenv::deps {
   include rbenv::deps
 
-  exec { 'git-clone-rbenv':
-    command => "/usr/bin/git clone ${rbenv::repo_path} ${install_dir}",
-    creates => $install_dir,
-    user    => $owner,
-    require => Package['git'],
+
+  $_git_clone_rbenv_ensure = $rbenv::latest ? {
+    true => 'latest',
+    default => 'present',
   }
+
+  vcsrepo {'git-clone-rbenv':
+    ensure   => $_git_clone_rbenv_ensure,
+    source   => $rbenv::repo_path,
+    path     => $install_dir,
+    provider => git,
+    user     => $owner,
+  }
+
 
   file { [
     $install_dir,
@@ -89,16 +97,6 @@ class rbenv (
     mode      => '0775'
   }
 
-  # run `git pull` on each run if we want to keep rbenv updated
-  if $rbenv::latest == true {
-    exec { 'update-rbenv':
-      command     => '/usr/bin/git pull',
-      cwd         => $install_dir,
-      user        => $owner,
-      require     => File[$install_dir],
-    }
-  }
-
-  Exec['git-clone-rbenv'] -> File[$install_dir]
+  Vcsrepo['git-clone-rbenv'] -> File[$install_dir]
 
 }

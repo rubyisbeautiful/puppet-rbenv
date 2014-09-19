@@ -67,13 +67,8 @@ define rbenv::build (
     unless  => "test -d ${install_dir}/versions/${title}",
     require => Class['rbenv'],
   }->
-  exec { "git-pull-rubybuild-${title}":
-    command => 'git reset --hard HEAD && git pull',
-    cwd     => "${install_dir}/plugins/ruby-build",
-    user    => 'root',
-    unless  => "test -d ${install_dir}/versions/${title}",
-    require => Rbenv::Plugin['sstephenson/ruby-build'],
-  }->
+  Rbenv::Plugin['sstephenson/ruby-build']
+  ->
   exec { "rbenv-install-${title}":
     command     => "rbenv install ${title}",
     environment => $environment_for_build,

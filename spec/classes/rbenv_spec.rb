@@ -9,12 +9,7 @@ describe 'rbenv', :type => 'class' do
     }
   end
 
-  it { should contain_exec('git-clone-rbenv').with(
-    {
-      'command' => '/usr/bin/git clone https://github.com/sstephenson/rbenv.git /usr/local/rbenv',
-      'creates' => '/usr/local/rbenv',
-    }
-  )}
+  it { should contain_vcsrepo('git-clone-rbenv') }
 
   [ 'plugins', 'shims', 'versions' ].each do |dir|
     describe "creates #{dir}" do

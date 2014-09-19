@@ -9,8 +9,8 @@
   "project_page": "https://github.com/justindowning/puppet-rbenv",
   "dependencies": [
     {
-      "name": "puppetlabs/git",
-      "version_requirement": ">= 0.0.3"
+      "name": "puppetlabs/vcsrepo",
+      "version_requirement": ">= 1.1.0"
     },
     {
       "name": "puppetlabs/stdlib",
